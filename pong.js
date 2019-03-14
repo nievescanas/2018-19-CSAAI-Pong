@@ -76,6 +76,16 @@ function main()
     },
   }
 
+  var end = {
+    init: function(ctx) {
+      this.ctx = ctx
+      },
+    draw: function(){
+      this.ctx.fillStyle = 'white';
+      this.ctx.fillRect(10,10, 580, 10);
+    },
+  }
+
   var escenario = {
     i : 0,
     limite : 70,
@@ -97,6 +107,7 @@ function main()
   var puntuacion = {
     num1 : 0,
     num2 : 0,
+    max : 2,
 
     init: function(ctx) {
       this.ctx = ctx
@@ -108,6 +119,10 @@ function main()
       this.ctx.fillText(this.num1, 210, 60)
       this.ctx.fillText(this.num2, 350, 60)
     },
+    reset: function() {
+      this.num1 = 0;
+      this.num2 = 0;
+    }
   }
 
   var raquetas = {
@@ -121,6 +136,7 @@ function main()
       ctx.fillRect(x_1,y_1, r_ancho, r_largo)
       ctx.fillRect(x_2,y_2, r_ancho, r_largo)
     },
+
   }
 
   var bola = {
@@ -190,6 +206,7 @@ function main()
   puntuacion.init(ctx)
   raquetas.init(ctx)
   bola.init(ctx)
+  end.init(ctx)
 
 
   //-- Crear timer para la animación
@@ -247,13 +264,18 @@ function main()
 
               //-- Bola a su posicion inicial
               bola.reset();
-
+              if (puntuacion.num1<=puntuacion.max && puntuacion.num2<=puntuacion.max){
               //-- Dibujar la bola en pos. inicial
               ctx.clearRect(0, 0, canvas.width, canvas.height);
               bola.draw();
               raquetas.draw()
               puntuacion.draw()
               escenario.draw()
+              }else{
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                end.draw()
+                puntuacion.reset()
+              }
             }
           },20); //-- timer
         }
