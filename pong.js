@@ -94,19 +94,19 @@ function main()
     },
   }
 
-
   var puntuacion = {
-    Num1 : 0,
-    Num2 : 0,
+    num1 : 0,
+    num2 : 0,
 
     init: function(ctx) {
       this.ctx = ctx
     },
     draw: function () {
+      this.ctx.beginPath();
       this.ctx.font = "80px Arial"
       this.ctx.fillStyle = 'white'
-      this.ctx.fillText(this.Num1, 210, 60)
-      this.ctx.fillText(this.Num2, 350, 60)
+      this.ctx.fillText(this.num1, 210, 60)
+      this.ctx.fillText(this.num2, 350, 60)
     },
   }
 
@@ -226,7 +226,7 @@ function main()
             //-- Borrar el canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            //-- Dibuar la bola
+            //-- Dibuar la bola, raquetas, puntuación y escenario
             bola.draw();
             raquetas.draw()
             puntuacion.draw()
@@ -235,6 +235,11 @@ function main()
             //-- Si la bola llega a la parte derecha del canvas:
             //-- Terminar
             if (bola.x > canvas.width || bola.x < 0-bola.ballRadius) {
+              if (bola.x > canvas.width){
+                puntuacion.num1 += 1;
+              }else{
+                puntuacion.num2 += 1;
+              }
 
               //-- Eliminar el timer
               clearInterval(timer)
@@ -244,7 +249,11 @@ function main()
               bola.reset();
 
               //-- Dibujar la bola en pos. inicial
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
               bola.draw();
+              raquetas.draw()
+              puntuacion.draw()
+              escenario.draw()
             }
           },20); //-- timer
         }
