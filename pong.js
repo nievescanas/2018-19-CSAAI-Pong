@@ -158,14 +158,15 @@ function main()
 
     //-- Update
     update: function () {
-      if (y_1 <= this.y && y_1 + r_largo >= this.y || y_2 <= this.y && y_2 + r_largo >= this.y){
-        if(this.x + this.vx > x_2-this.ballRadius || this.x + this.vx < x_1 - r_ancho + this.ballRadius) {
-          console.log(y_1);
-          console.log(this.y);
-          console.log(y_2);
-        
+      if (y_1 <= this.y && y_1 + r_largo >= this.y ){
+        if(this.x + this.vx < x_1 - r_ancho + this.ballRadius){
           this.vx = -this.vx;
         }
+      }
+      if (y_2 <= this.y && y_2 + r_largo >= this.y){
+          if (this.x + this.vx > x_2-this.ballRadius){
+            this.vx = -this.vx;
+          }
       }
       if(this.y + this.vy > canvas.height-this.ballRadius || this.y + this.vy < escenario.limite+this.ballRadius) {
         this.vy = -this.vy;
