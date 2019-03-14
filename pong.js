@@ -2,6 +2,8 @@
 function main()
 {
   console.log("Pong: Main: Start!")
+  console.log("Player 1 : W / S")
+  console.log("Player 2 : 8 / 5")
 
   var canvas = document.getElementById('display')
   canvas.width = 600;
@@ -80,9 +82,18 @@ function main()
     init: function(ctx) {
       this.ctx = ctx
       },
-    draw: function(){
+    draw: function(p1,p2){
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(10,10, 580, 10);
+      this.ctx.beginPath();
+      this.ctx.font = "60px Impact"
+      this.ctx.fillStyle = 'white'
+      this.ctx.fillText("GAME OVER", 120, 100)
+      this.ctx.font = "20px Impact"
+      this.ctx.fillText("PLAYER 1", 120, 200)
+      this.ctx.fillText(p1, 160, 240)
+      this.ctx.fillText("PLAYER 2", 380, 200)
+      this.ctx.fillText(p2, 420, 240)
     },
   }
 
@@ -212,6 +223,7 @@ function main()
   //-- Crear timer para la animación
   //-- Inicialmente a null
   var timer = null;
+  var timer1 = null;
 
   //-- Boton de salcar
   var start = document.getElementById('start')
@@ -265,15 +277,15 @@ function main()
               //-- Bola a su posicion inicial
               bola.reset();
               if (puntuacion.num1<=puntuacion.max && puntuacion.num2<=puntuacion.max){
-              //-- Dibujar la bola en pos. inicial
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              bola.draw();
-              raquetas.draw()
-              puntuacion.draw()
-              escenario.draw()
+                //-- Dibujar la bola en pos. inicial
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                bola.draw();
+                raquetas.draw()
+                puntuacion.draw()
+                escenario.draw()
               }else{
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                end.draw()
+                end.draw(puntuacion.num1,puntuacion.num2)
                 puntuacion.reset()
               }
             }
