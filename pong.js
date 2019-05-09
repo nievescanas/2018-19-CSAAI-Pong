@@ -4,6 +4,7 @@ function main()
   console.log("Pong: Main: Start!")
   console.log("Player 1 : W / S")
   console.log("Player 2 : 8 / 5")
+  console.log("Pelota : Space")
 
   var canvas = document.getElementById('display')
   canvas.width = 600;
@@ -20,28 +21,9 @@ function main()
   var r_ancho = 10;
   var r_largo =40;
   var comenzar = false;
+  var init_pelota = false;
 
-  window.onkeydown = (e) => {
-    e.preventDefault();
-    if(e.key == 'w'){
-      if (y_1 > escenario.limite){
-        y_1 -= 10;
-      }
-    } else if(e.key == 's'){
-      if(y_1 < canvas.height){
-        y_1 += 10;
-      }
-    }
-    if(e.key == '8'){
-      if (y_2 > escenario.limite){
-        y_2 -= 10;
-      }
-    } else if(e.key == '5'){
-      if (y_2 < canvas.height){
-        y_2 += 10;
-      }
-    }
-  }
+
 
   var inicio = {
     frase: "START",
@@ -163,8 +145,8 @@ function main()
     y : 0,
 
     //-- Velocidad
-    vx : 4,
-    vy : 1,
+    vx : -4,
+    vy : -1,
 
     //-- Contexto
     ctx: null,
@@ -186,7 +168,7 @@ function main()
     //-- Update
     update: function () {
       if (y_1 <= this.y && y_1 + r_largo >= this.y ){
-        if(this.x + this.vx < x_1 - r_ancho + this.ballRadius){
+        if(this.x + this.vx < x_1 + r_ancho + this.ballRadius){
           this.vx = -this.vx;
         }
       }
@@ -206,6 +188,8 @@ function main()
     reset: function() {
       this.x = this.x_ini;
       this.y = this.y_ini;
+      this.vx = -this.vx;
+      this.vy = -this.vy;
     }
   }
 
@@ -228,70 +212,96 @@ function main()
   //-- Boton de salcar
   var start = document.getElementById('start')
 
+  start.onclick = () => {
+    document.getElementById('start').style.display = 'none';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    escenario.draw(ctx);
+    puntuacion.draw(ctx);
+    raquetas.draw(ctx);
+  }
+
   //-- Función de retrollamda del botón de sacar.
   //-- ¡Que comience la animación!
 
-  start.onclick = () => {
-    //-- Inicializar
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    escenario.draw(ctx)
-    puntuacion.draw(ctx)
-    raquetas.draw(ctx)
-    bola.draw(ctx)
+  window.onkeydown = (e) => {
+    e.preventDefault();
+    if(e.key == 'w'){
+      if (y_1 > escenario.limite){
+        y_1 -= 10;
+      }
+    } else if(e.key == 's'){
+      if(y_1 < canvas.height){
+        y_1 += 10;
+      }
+    }
+    if(e.key == '8'){
+      if (y_2 > escenario.limite){
+        y_2 -= 10;
+      }
+    } else if(e.key == '5'){
+      if (y_2 < canvas.height){
+        y_2 += 10;
+      }
+    }else if(e.key == ' '){
+      //-- Inicializar
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      escenario.draw(ctx)
+      puntuacion.draw(ctx)
+      raquetas.draw(ctx)
+      bola.draw(ctx)
 
-      //if(comenzar){
-        //-- Si la bola ya se está animando,
-        //-- no hacer nada
-        if (!timer) {
+        //if(comenzar){
+          //-- Si la bola ya se está animando,
+          //-- no hacer nada
+          if (!timer) {
 
-          //-- Lanzar el timer. Su funcion de retrollamada la definimos
-          //-- en su primer parámetro
-          timer = setInterval(()=>{
+            //-- Lanzar el timer. Su funcion de retrollamada la definimos
+            //-- en su primer parámetro
+            timer = setInterval(()=>{
 
-            //-- Esto se ejecuta cada 20ms
-            //-- Actualizar la bola
-            bola.update();
+              //-- Esto se ejecuta cada 20ms
+              //-- Actualizar la bola
+              bola.update();
 
-            //-- Borrar el canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+              //-- Borrar el canvas
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            //-- Dibuar la bola, raquetas, puntuación y escenario
-            bola.draw();
-            raquetas.draw()
-            puntuacion.draw()
-            escenario.draw()
+              //-- Dibuar la bola, raquetas, puntuación y escenario
+              bola.draw();
+              raquetas.draw()
+              puntuacion.draw()
+              escenario.draw()
 
-            //-- Si la bola llega a la parte derecha del canvas:
-            //-- Terminar
-            if (bola.x > canvas.width || bola.x < 0-bola.ballRadius) {
-              if (bola.x > canvas.width){
-                puntuacion.num1 += 1;
-              }else{
-                puntuacion.num2 += 1;
+              //-- Si la bola llega a la parte derecha del canvas:
+              //-- Terminar
+              if (bola.x > canvas.width || bola.x < 0-bola.ballRadius) {
+                if (bola.x > canvas.width){
+                  puntuacion.num1 += 1;
+                }else{
+                  puntuacion.num2 += 1;
+                }
+
+                //-- Eliminar el timer
+                clearInterval(timer)
+                timer = null;
+
+                //-- Bola a su posicion inicial
+                bola.reset();
+                if (puntuacion.num1<=puntuacion.max && puntuacion.num2<=puntuacion.max){
+                  //-- Dibujar la bola en pos. inicial
+                  ctx.clearRect(0, 0, canvas.width, canvas.height);
+                  bola.draw();
+                  raquetas.draw()
+                  puntuacion.draw()
+                  escenario.draw()
+                }else{
+                  ctx.clearRect(0, 0, canvas.width, canvas.height);
+                  end.draw(puntuacion.num1,puntuacion.num2)
+                  puntuacion.reset()
+                }
               }
-
-              //-- Eliminar el timer
-              clearInterval(timer)
-              timer = null;
-
-              //-- Bola a su posicion inicial
-              bola.reset();
-              if (puntuacion.num1<=puntuacion.max && puntuacion.num2<=puntuacion.max){
-                //-- Dibujar la bola en pos. inicial
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                bola.draw();
-                raquetas.draw()
-                puntuacion.draw()
-                escenario.draw()
-              }else{
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                end.draw(puntuacion.num1,puntuacion.num2)
-                puntuacion.reset()
-              }
-            }
-          },20); //-- timer
+            },20); //-- timer
+          }
         }
-      //}
-
-  } //-- Fin onclick
+      } //-- Fin onclick
 }
